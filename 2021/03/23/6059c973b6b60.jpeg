@@ -1,0 +1,112 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>HidoveAuth - 授权系统</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<link rel="stylesheet" href="//cdnjs.loli.net/ajax/libs/mdui/0.4.3/css/mdui.min.css">
+<script src="https://cdn.jsdelivr.net/npm/vue" type="e194b8457a857476d155bfc5-text/javascript"></script>
+<script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js" type="e194b8457a857476d155bfc5-text/javascript"></script>
+<link rel="stylesheet" href="/static/index/style.css">
+</head>
+<body class="mdui-drawer-body-left mdui-appbar-with-toolbar  mdui-theme-primary-indigo mdui-theme-accent-pink">
+<header class="mdui-appbar mdui-appbar-fixed">
+<div class="mdui-toolbar mdui-color-theme">
+<span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-drawer="{target: '#main-drawer', swipe: true}"><i class="mdui-icon material-icons">menu</i></span>
+<a href="/" class="mdui-typo-headline">HidoveAuth</a>
+
+<div class="mdui-toolbar-spacer"></div>
+<a href="" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">refresh</i></a>
+</div>
+</header>
+
+<div class="mdui-drawer" id="main-drawer">
+<ul class="mdui-list">
+<a class="mdui-list-item mdui-ripple" href="/">
+<i class="mdui-list-item-icon mdui-icon material-icons">home</i>
+<div class="mdui-list-item-content">首页</div>
+</a>
+<a class="mdui-list-item mdui-ripple" href="/check">
+<i class="mdui-list-item-icon mdui-icon material-icons">search</i>
+<div class="mdui-list-item-content">授权查询</div>
+</a>
+<a class="mdui-list-item mdui-ripple" href="/user/login">
+<i class="mdui-list-item-icon mdui-icon material-icons">account_circle</i>
+<div class="mdui-list-item-content">登录</div>
+</a>
+</ul>
+</div>
+<div class="mdui-container mdui-m-t-3">
+<div id="app">
+<div class="mdui-row-xs-1 mdui-row-sm-2 mdui-row-md-3 mdui-row-lg-4">
+<div class="mdui-col" v-for="item in data">
+<div class=" mdui-card mdui-m-a-1">
+<div class="mdui-card-header">
+<img class="mdui-card-header-avatar" :src="item.avatar" />
+<div class="mdui-card-header-title">{{long_string_filter(item.title,15)}}</div>
+<div class="mdui-card-header-subtitle">{{item.domain}}</div>
+</div>
+<div class="mdui-card-content index-card-content">{{long_string_filter(item.description,50)}}</div>
+<div class="mdui-card-actions">
+<button class="mdui-btn mdui-ripple" @click="window.open(item.url)">Go</button>
+<button class="mdui-btn mdui-btn-icon mdui-float-right"><i class="mdui-icon material-icons">expand_more</i></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="//cdnjs.loli.net/ajax/libs/mdui/0.4.3/js/mdui.min.js" type="e194b8457a857476d155bfc5-text/javascript"></script>
+<script src="/static/common/js/function.js" type="e194b8457a857476d155bfc5-text/javascript"></script>
+<script type="e194b8457a857476d155bfc5-text/javascript">
+    // var $$ = mdui.JQ;
+    //导航切换
+    //
+    $(function () {
+        $("#main-drawer").find('.mdui-list a').each(function () {
+            let a = $(this).get(0);
+            if ($(a).attr("href") === location.pathname) {
+                $(this).addClass("mdui-list-item-active");
+            } else {
+                $(this).removeClass("mdui-list-item-active");
+            }
+        });
+    });
+</script>
+<script type="e194b8457a857476d155bfc5-text/javascript">
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            page: 1,
+            limit: 12,
+            data: []
+        },
+        mounted: function () {
+            this.getDomainList();
+
+        },
+        methods: {
+            getDomainList: function () {
+                let that = this;
+                $.ajax({
+                    method: 'get',
+                    url: '/ajax/domain/get',
+                    dataType: 'json',
+                    data: {
+                        page: that.page,
+                        limit: that.limit,
+                    },
+                    success: function (data) {
+                        if (data.code === 200) {
+                            that.data = data.data;
+                        } else {
+                            alert(data.msg);
+                        }
+                    }
+                });
+            },
+        }
+    })
+</script>
+<script src="https://ajax.cloudflare.com/cdn-cgi/scripts/7089c43e/cloudflare-static/rocket-loader.min.js" data-cf-settings="e194b8457a857476d155bfc5-|49" defer=""></script></body>
+</html>
